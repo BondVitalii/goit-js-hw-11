@@ -26,6 +26,7 @@ function onSubmit(evt) {
   refs.btnLoad.style.display = 'none';
 
   if (searchValue !== '') {
+    alreadyShown = 0;
     fetchImages(searchValue);
   } else {
     refs.btnLoad.style.display = 'none';
@@ -105,28 +106,33 @@ function onbtnLoad() {
   const searchValue = refs.form.elements.searchQuery.value.trim();
 
   fetchImages(searchValue, page);
-  // refs.btnLoad.style.display = 'block';
 }
 
 function showMessage(length, total, alreadyShown) {
   if (!length) {
     refs.btnLoad.style.display = 'none';
-    Notiflix.Notify.failure(
+    return Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
 
   if (length > 0) {
     refs.btnLoad.style.display = 'block';
-    Notiflix.Notify.success(`Hooray! We found ${total} images.`);
-    return;
   }
 
-  if (alreadyShown >= total) {
+  if (page === 1) {
+    Notiflix.Notify.success(`Hooray! We found ${total} images.`);
+  }
+
+  if (alreadyShown >= total && page !== 1) {
     refs.btnLoad.style.display = 'none';
     Notiflix.Notify.info(
       "We're sorry, but you've reached the end of search results."
     );
+  }
+
+  if (length === total) {
+    refs.btnLoad.style.display = 'none';
   }
 }
 
